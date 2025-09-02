@@ -1,1 +1,4 @@
 /target
+
+# テスト用の出力ファイルを除外
+output.txt
