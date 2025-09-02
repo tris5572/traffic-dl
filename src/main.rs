@@ -1,11 +1,21 @@
 use anyhow::Result;
+use clap::Parser;
+
+#[derive(Parser)]
+struct Cli {
+    /// YYYYMMDD フォーマットの日付
+    date: String,
+}
 
 #[tokio::main]
 async fn main() -> Result<()> {
+    let args = Cli::parse();
+
     let content = get_data_from_url("https://httpbin.org/ip").await?;
 
-    save_to_file("output.txt", &content).await?;
-    println!("{}", &content);
+    // let filename = format!("{}.txt", args.date);
+    let filename = "output.txt";
+    save_to_file(&filename, &content).await?;
 
     Ok(())
 }
