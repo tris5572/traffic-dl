@@ -1,4 +1,4 @@
-use anyhow::Result;
+use anyhow::{Context, Result};
 use clap::Parser;
 
 mod datetime;
@@ -14,7 +14,8 @@ async fn main() -> Result<()> {
     let args = Cli::parse();
 
     let content = get_data_from_url("https://httpbin.org/ip").await?;
-    // let _dt = datetime::parse(&args.date);
+    let _dt = datetime::parse(&args.date)
+        .with_context(|| format!("日時指定が解釈不能。YYYYMMDD 形式による指定が必要"))?;
 
     // let filename = format!("{}.txt", args.date);
     let filename = "output.txt";
