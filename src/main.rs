@@ -1,6 +1,8 @@
 use anyhow::Result;
 use clap::Parser;
 
+mod datetime;
+
 #[derive(Parser)]
 struct Cli {
     /// YYYYMMDD フォーマットの日付
@@ -12,6 +14,7 @@ async fn main() -> Result<()> {
     let args = Cli::parse();
 
     let content = get_data_from_url("https://httpbin.org/ip").await?;
+    // let _dt = datetime::parse(&args.date);
 
     // let filename = format!("{}.txt", args.date);
     let filename = "output.txt";
