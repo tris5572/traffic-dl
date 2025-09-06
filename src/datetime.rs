@@ -1,4 +1,4 @@
-use chrono::{Datelike, NaiveDate, NaiveDateTime};
+use chrono::{Datelike, NaiveDate, NaiveDateTime, Timelike};
 
 #[derive(Debug, PartialEq)]
 pub enum DT {
@@ -8,9 +8,32 @@ pub enum DT {
         month: u32,
         day: u32,
     },
+    YMDH {
+        string: String,
+        year: i32,
+        month: u32,
+        day: u32,
+        hour: u32,
+    },
 }
 
 pub fn parse(input: &str) -> Option<DT> {
+    // YYYYMMDDHH
+    // chrono のパースでは「分」の指定が必須であるため、10文字だったときは`00` を追加して分があるものとして解釈してみる
+    if input.len() == 10 {
+        let result = NaiveDateTime::parse_from_str(&format!("{}00", input), "%Y%m%d%H%M");
+        if let Ok(dt) = result {
+            let dt = DT::YMDH {
+                string: input.to_string(),
+                year: dt.year(),
+                month: dt.month(),
+                day: dt.day(),
+                hour: dt.hour(),
+            };
+            return Some(dt);
+        }
+    }
+
     // YYYYMMDD
     let result = NaiveDate::parse_from_str(input, "%Y%m%d");
     if let Ok(ymd) = result {
@@ -30,6 +53,31 @@ pub fn parse(input: &str) -> Option<DT> {
 #[cfg(test)]
 mod parse_tests {
     use super::*;
+
+    #[test]
+    fn yyyymmddhh() {
+        assert_eq!(
+            parse("2025010203"),
+            Some(DT::YMDH {
+                string: "2025010203".into(),
+                year: 2025,
+                month: 1,
+                day: 2,
+                hour: 3,
+            })
+        );
+        assert_eq!(
+            parse("2025123123"),
+            Some(DT::YMDH {
+                string: "2025123123".into(),
+                year: 2025,
+                month: 12,
+                day: 31,
+                hour: 23,
+            })
+        );
+        assert!(parse("2025010224").is_none());
+    }
 
     #[test]
     fn yyyymmdd() {
