@@ -10,16 +10,14 @@ mod url;
 
 #[derive(Parser)]
 struct Cli {
-    /// YYYYMMDD フォーマットの日付
+    /// YYYYMMDDフォーマットの日付
     date: String,
-
-    /// 5分間隔のデータを取得する
-    #[arg(long = "5m", conflicts_with = "h1")]
-    m5: bool,
-
-    /// 1時間間隔のデータを取得する
+    /// 1時間ごとのデータを取得 (デフォルト)
     #[arg(long = "1h", default_value_t = true)]
     h1: bool,
+    /// 5分間隔のデータを取得。この指定時、1時間ごとのデータ(--1h)を取得しない
+    #[arg(long = "5m", conflicts_with = "h1")]
+    m5: bool,
 }
 
 #[tokio::main]
