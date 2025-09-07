@@ -1,40 +1,22 @@
-use anyhow::{Context, Result};
+use anyhow::Result;
 use clap::Parser;
 
 mod datetime;
+mod run_option;
 mod types;
 mod url;
 
 // const TEST_IP_URL: &str = "https://httpbin.org/ip";
 // const TEST_DATA_URL: &str = "https://api.jartic-open-traffic.org/geoserver?service=WFS&version=2.0.0&request=GetFeature&typeNames=t_travospublic_measure_1h&srsName=EPSG:4326&outputFormat=application/json&exceptions=application/json&cql_filter=道路種別='3' AND 時間コード=202509010900 AND 常時観測点コード=3310840";
 
-#[derive(Parser)]
-struct Cli {
-    /// YYYYMMDDフォーマットの日付
-    date: String,
-    /// 1時間ごとのデータを取得 (デフォルト)
-    #[arg(long = "1h", default_value_t = true)]
-    h1: bool,
-    /// 5分間隔のデータを取得。この指定時、1時間ごとのデータ(--1h)を取得しない
-    #[arg(long = "5m", conflicts_with = "h1")]
-    m5: bool,
-}
-
 #[tokio::main]
 async fn main() -> Result<()> {
-    let args = Cli::parse();
+    let args = types::Cli::parse();
 
-    let interval = if args.m5 {
-        types::Interval::M5
-    } else {
-        types::Interval::H1
-    };
+    // RunOptionの作成
+    let run_option = run_option::RunOption::from_cli(&args);
 
-    // let content = get_data_from_url(TEST_DATA_URL).await?;
-    let dt = datetime::parse(&args.date)
-        .with_context(|| format!("日時指定が解釈不能。YYYYMMDD 形式による指定が必要"))?;
-
-    let url = url::create_url(dt, interval);
+    let url = url::create_url(run_option.datetime, run_option.interval);
     let content = get_data_from_url(&url).await?;
 
     // let filename = format!("{}.txt", args.date);
