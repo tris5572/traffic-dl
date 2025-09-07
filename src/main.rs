@@ -2,6 +2,7 @@ use anyhow::{Context, Result};
 use clap::Parser;
 
 mod datetime;
+mod types;
 mod url;
 
 // const TEST_IP_URL: &str = "https://httpbin.org/ip";
@@ -11,17 +12,31 @@ mod url;
 struct Cli {
     /// YYYYMMDD フォーマットの日付
     date: String,
+
+    /// 5分間隔のデータを取得する
+    #[arg(long = "5m", conflicts_with = "h1")]
+    m5: bool,
+
+    /// 1時間間隔のデータを取得する
+    #[arg(long = "1h", default_value_t = true)]
+    h1: bool,
 }
 
 #[tokio::main]
 async fn main() -> Result<()> {
     let args = Cli::parse();
 
+    let interval = if args.m5 {
+        types::Interval::M5
+    } else {
+        types::Interval::H1
+    };
+
     // let content = get_data_from_url(TEST_DATA_URL).await?;
     let dt = datetime::parse(&args.date)
         .with_context(|| format!("日時指定が解釈不能。YYYYMMDD 形式による指定が必要"))?;
 
-    let url = url::create_url(dt);
+    let url = url::create_url(dt, interval);
     let content = get_data_from_url(&url).await?;
 
     // let filename = format!("{}.txt", args.date);
