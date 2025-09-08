@@ -1,14 +1,14 @@
-use crate::datetime;
+use crate::datetime::DT;
 use crate::types::*;
 
 const URL_1H: &str = "https://api.jartic-open-traffic.org/geoserver?service=WFS&version=2.0.0&request=GetFeature&typeNames=t_travospublic_measure_1h&srsName=EPSG:4326&outputFormat=application/json&exceptions=application/json&cql_filter=";
 const URL_5M: &str = "https://api.jartic-open-traffic.org/geoserver?service=WFS&version=2.0.0&request=GetFeature&typeNames=t_travospublic_measure_5m&srsName=EPSG:4326&outputFormat=application/json&exceptions=application/json&cql_filter=";
 
 /// 取得対象の URL を返す仮実装
-pub fn create_url(input: datetime::DT, interval: Interval) -> String {
+pub fn create_url(input: DT, interval: Interval) -> String {
     let datetime_str = match input {
-        datetime::DT::YMD { string, .. } => format!("{}0000", string),
-        datetime::DT::YMDH { string, .. } => format!("{}00", string),
+        DT::YMD { string, .. } => format!("{}0000", string),
+        DT::YMDH { string, .. } => format!("{}00", string),
     };
 
     let base_url = match interval {
