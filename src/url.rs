@@ -21,3 +21,68 @@ pub fn create_url(input: DT, interval: Interval) -> String {
         base_url, datetime_str
     )
 }
+
+/// 1時間ごとのデータを取得するため、取得対象日時の配列を生成する
+/// - 年月日のみが指定されている場合は、1日分のリストを返す
+/// - 年月日と時が指定されている場合は、1時間分のみを返す
+/// - それ以外の場合は空配列を返す
+pub fn get_datetime_list_1h(dt: DT) -> Vec<String> {
+    match dt {
+        DT::YMD { string, .. } => {
+            let mut output = Vec::new();
+            for hour in 0..24 {
+                let hour_str = format!("{:02}", hour);
+                output.push(format!("{}{}", string, hour_str));
+            }
+            output
+        }
+        DT::YMDH { string, .. } => {
+            vec![string]
+        }
+    }
+}
+
+#[cfg(test)]
+mod get_datetime_list_1h_tests {
+    use super::*;
+
+    #[test]
+    fn test_get_datetime_list_1h_for_ymd() {
+        let dt = DT::YMD {
+            string: "20250102".to_string(),
+            year: 2025,
+            month: 1,
+            day: 2,
+        };
+
+        let result = get_datetime_list_1h(dt);
+
+        // 24時間分のデータが返されることを確認
+        assert_eq!(result.len(), 24);
+
+        // 各要素が正しい形式であること確認
+        for (i, datetime) in result.iter().enumerate() {
+            let expected_hour = format!("{:02}", i);
+            assert_eq!(datetime, &format!("20250102{}", expected_hour));
+        }
+    }
+
+    #[test]
+    fn test_get_datetime_list_1h_for_ymdh() {
+        let dt = DT::YMDH {
+            string: "2025010203".to_string(),
+            year: 2025,
+            month: 1,
+            day: 2,
+            hour: 3,
+        };
+
+        let result = get_datetime_list_1h(dt);
+
+        // 1時間分のみが返されることを確認
+        assert_eq!(result.len(), 1);
+
+        // 返された要素が正しい形式であること確認
+        assert_eq!(result[0], "2025010203");
+    }
+}
