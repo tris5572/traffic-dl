@@ -2,7 +2,7 @@ use anyhow::Result;
 use clap::Parser;
 
 mod datetime;
-mod run_option;
+mod execution_option;
 mod types;
 mod url;
 
@@ -14,7 +14,7 @@ async fn main() -> Result<()> {
     let args = types::Cli::parse();
 
     // RunOptionの作成
-    let run_option = run_option::RunOption::from_cli(&args);
+    let run_option = execution_option::ExecutionOption::from_cli(&args);
 
     let url = url::create_url(run_option.datetime, run_option.interval);
     let content = get_data_from_url(&url).await?;
