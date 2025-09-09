@@ -32,12 +32,12 @@ pub fn get_datetime_list_1h(dt: DT) -> Vec<String> {
             let mut output = Vec::new();
             for hour in 0..24 {
                 let hour_str = format!("{:02}", hour);
-                output.push(format!("{}{}", string, hour_str));
+                output.push(format!("{}{}00", string, hour_str));
             }
             output
         }
         DT::YMDH { string, .. } => {
-            vec![string]
+            vec![format!("{}00", string)]
         }
     }
 }
@@ -63,7 +63,7 @@ mod get_datetime_list_1h_tests {
         // 各要素が正しい形式であること確認
         for (i, datetime) in result.iter().enumerate() {
             let expected_hour = format!("{:02}", i);
-            assert_eq!(datetime, &format!("20250102{}", expected_hour));
+            assert_eq!(datetime, &format!("20250102{}00", expected_hour));
         }
     }
 
@@ -83,6 +83,6 @@ mod get_datetime_list_1h_tests {
         assert_eq!(result.len(), 1);
 
         // 返された要素が正しい形式であること確認
-        assert_eq!(result[0], "2025010203");
+        assert_eq!(result[0], "202501020300");
     }
 }
