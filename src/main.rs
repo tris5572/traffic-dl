@@ -18,8 +18,8 @@ async fn main() -> Result<()> {
 
     let url = url::create_url(run_option.datetime, run_option.interval);
     let content = get_data_from_url(&url).await?;
+    // println!("{}", &content);
 
-    // let filename = format!("{}.txt", args.date);
     let filename = "output.txt";
     save_to_file(&filename, &content).await?;
 

@@ -6,27 +6,28 @@ const URL_5M: &str = "https://api.jartic-open-traffic.org/geoserver?service=WFS&
 
 /// 取得対象の URL を返す仮実装
 pub fn create_url(input: DT, interval: Interval) -> String {
-    let datetime_str = match input {
-        DT::YMD { string, .. } => format!("{}0000", string),
-        DT::YMDH { string, .. } => format!("{}00", string),
-    };
-
     let base_url = match interval {
         Interval::M5 => URL_5M,
         Interval::H1 => URL_1H,
     };
 
-    format!(
-        "{}道路種別='3' AND 時間コード={} AND 常時観測点コード=3310840",
-        base_url, datetime_str
-    )
+    let datetime_list = get_datetime_list_1h(&input);
+
+    if 0 < datetime_list.len() {
+        format!(
+            "{}道路種別='3' AND 時間コード={} AND 常時観測点コード=3310840",
+            base_url, datetime_list[0]
+        )
+    } else {
+        "".into()
+    }
 }
 
 /// 1時間ごとのデータを取得するため、取得対象日時の配列を生成する
 /// - 年月日のみが指定されている場合は、1日分のリストを返す
 /// - 年月日と時が指定されている場合は、1時間分のみを返す
 /// - それ以外の場合は空配列を返す
-pub fn get_datetime_list_1h(dt: DT) -> Vec<String> {
+pub fn get_datetime_list_1h(dt: &DT) -> Vec<String> {
     match dt {
         DT::YMD { string, .. } => {
             let mut output = Vec::new();
@@ -55,7 +56,7 @@ mod get_datetime_list_1h_tests {
             day: 2,
         };
 
-        let result = get_datetime_list_1h(dt);
+        let result = get_datetime_list_1h(&dt);
 
         // 24時間分のデータが返されることを確認
         assert_eq!(result.len(), 24);
@@ -77,7 +78,7 @@ mod get_datetime_list_1h_tests {
             hour: 3,
         };
 
-        let result = get_datetime_list_1h(dt);
+        let result = get_datetime_list_1h(&dt);
 
         // 1時間分のみが返されることを確認
         assert_eq!(result.len(), 1);
