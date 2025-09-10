@@ -38,3 +38,55 @@ impl ExecutionOption {
         Ok(execution_option)
     }
 }
+
+#[cfg(test)]
+mod execute_option_from_args_test {
+    use super::*;
+
+    /// テスト用の Cli 構造体を生成する
+    fn default_args() -> Cli {
+        Cli {
+            date: "20250102".to_string(),
+            h1: true,
+            m5: false,
+            permanent: None,
+            cctv: None,
+        }
+    }
+
+    #[cfg(test)]
+    mod 日時指定 {
+        use super::*;
+
+        #[test]
+        fn valid() {
+            let mut args = default_args();
+
+            args.date = "20250901".into();
+            assert!(ExecutionOption::from_args(&args).is_ok());
+        }
+
+        #[test]
+        fn invalid() {
+            let mut args = default_args();
+
+            args.date = "2025090".into();
+            assert!(ExecutionOption::from_args(&args).is_err());
+
+            args.date = "202509".into();
+            assert!(ExecutionOption::from_args(&args).is_err());
+
+            args.date = "20251".into();
+            assert!(ExecutionOption::from_args(&args).is_err());
+
+            args.date = "2025".into();
+            assert!(ExecutionOption::from_args(&args).is_err());
+
+            args.date = "abc".into();
+            assert!(ExecutionOption::from_args(&args).is_err());
+
+            args.date = "".into();
+            assert!(ExecutionOption::from_args(&args).is_err());
+        }
+    }
+}
