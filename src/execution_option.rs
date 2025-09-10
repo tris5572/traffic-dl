@@ -1,7 +1,7 @@
 use anyhow::{Context, Result};
 
 use crate::datetime;
-use crate::types::{Cli, Interval};
+use crate::types::Cli;
 
 /// 実行時のオプションを保持する構造体
 #[derive(Debug)]

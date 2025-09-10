@@ -4,25 +4,6 @@ use crate::types::*;
 const URL_1H: &str = "https://api.jartic-open-traffic.org/geoserver?service=WFS&version=2.0.0&request=GetFeature&typeNames=t_travospublic_measure_1h&srsName=EPSG:4326&outputFormat=application/json&exceptions=application/json&cql_filter=";
 const URL_5M: &str = "https://api.jartic-open-traffic.org/geoserver?service=WFS&version=2.0.0&request=GetFeature&typeNames=t_travospublic_measure_5m&srsName=EPSG:4326&outputFormat=application/json&exceptions=application/json&cql_filter=";
 
-/// 取得対象の URL を返す仮実装
-pub fn create_url(input: DT, interval: Interval) -> String {
-    let base_url = match interval {
-        Interval::M5 => URL_5M,
-        Interval::H1 => URL_1H,
-    };
-
-    let datetime_list = get_datetime_list_1h(&input);
-
-    if 0 < datetime_list.len() {
-        format!(
-            "{}道路種別='3' AND 時間コード={} AND 常時観測点コード=3310840",
-            base_url, datetime_list[0]
-        )
-    } else {
-        "".into()
-    }
-}
-
 /// ファイル名と取得先 URL のタプルのリストを生成する
 pub fn create_names_and_urls(datetime: DT, cli: &Cli) -> Vec<(String, String)> {
     let mut output = vec![];

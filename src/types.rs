@@ -19,12 +19,3 @@ pub struct Cli {
     #[arg(long = "cctv")]
     pub cctv: Option<bool>,
 }
-
-/// データの取得間隔
-#[derive(Debug)]
-pub enum Interval {
-    /// 5分ごと
-    M5,
-    /// 1時間ごと
-    H1,
-}
