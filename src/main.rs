@@ -15,7 +15,7 @@ mod url;
 async fn main() -> Result<()> {
     let args = types::Cli::parse();
 
-    let execute_option = execution_option::ExecutionOption::from_cli(&args)?;
+    let execute_option = execution_option::ExecutionOption::from_args(&args)?;
 
     let dt = datetime::parse(&args.date).expect("日時指定が不正");
 

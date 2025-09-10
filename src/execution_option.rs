@@ -16,12 +16,10 @@ pub struct ExecutionOption {
 }
 
 impl ExecutionOption {
-    /// コマンドラインのオプションから、実行時のオプションを生成する
-    pub fn from_cli(cli: &Cli) -> Result<Self> {
-        // let interval = if cli.m5 { Interval::M5 } else { Interval::H1 };
-
-        let dt = datetime::parse(&cli.date)
-            .with_context(|| format!("{} を日時指定として解釈不能", cli.date))?;
+    /// コマンドラインの実行時オプションから、実際のコード実行時のオプションを生成する
+    pub fn from_args(args: &Cli) -> Result<Self> {
+        let dt = datetime::parse(&args.date)
+            .with_context(|| format!("{} を日時指定として解釈不能", args.date))?;
 
         // TODO: 後で実装する
         // 取得対象のセンサーの種類である常設トラカンとCCTVトラカンを設定する
@@ -31,8 +29,8 @@ impl ExecutionOption {
 
         let execution_option = ExecutionOption {
             datetime: dt,
-            interval_h1: cli.h1,
-            interval_m5: cli.m5,
+            interval_h1: args.h1,
+            interval_m5: args.m5,
             type_permanent: type_permanent,
             type_cctv: type_cctv,
         };
