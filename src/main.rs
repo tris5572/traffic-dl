@@ -15,13 +15,11 @@ mod url;
 async fn main() -> Result<()> {
     let args = types::Cli::parse();
 
-    // RunOptionの作成
-    // let run_option = execution_option::ExecutionOption::from_cli(&args);
+    let execute_option = execution_option::ExecutionOption::from_cli(&args)?;
 
     let dt = datetime::parse(&args.date).expect("日時指定が不正");
 
-    // let url = url::create_url(run_option.datetime, run_option.interval);
-    let names_and_urls = create_names_and_urls(dt, &args);
+    let names_and_urls = create_names_and_urls(dt, &execute_option);
     println!("{:?}", &names_and_urls);
     // let content = get_data_from_url(&url).await?;
     // println!("{}", &content);

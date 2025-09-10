@@ -1,11 +1,12 @@
 use crate::datetime::DT;
+use crate::execution_option::ExecutionOption;
 use crate::types::*;
 
 const URL_1H: &str = "https://api.jartic-open-traffic.org/geoserver?service=WFS&version=2.0.0&request=GetFeature&typeNames=t_travospublic_measure_1h&srsName=EPSG:4326&outputFormat=application/json&exceptions=application/json&cql_filter=";
 const URL_5M: &str = "https://api.jartic-open-traffic.org/geoserver?service=WFS&version=2.0.0&request=GetFeature&typeNames=t_travospublic_measure_5m&srsName=EPSG:4326&outputFormat=application/json&exceptions=application/json&cql_filter=";
 
 /// ファイル名と取得先 URL のタプルのリストを生成する
-pub fn create_names_and_urls(datetime: DT, cli: &Cli) -> Vec<(String, String)> {
+pub fn create_names_and_urls(datetime: DT, option: &ExecutionOption) -> Vec<(String, String)> {
     let mut output = vec![];
 
     match datetime {
