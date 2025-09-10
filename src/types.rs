@@ -11,6 +11,13 @@ pub struct Cli {
     /// 5分間隔のデータを取得。この指定時、1時間ごとのデータ(--1h)を取得しない
     #[arg(long = "5m", conflicts_with = "h1")]
     pub m5: bool,
+
+    /// 常設トラカンのみを取得対象とする
+    #[arg(long = "permanent")]
+    pub permanent: Option<bool>,
+    /// CCTVトラカンのみを取得対象とする
+    #[arg(long = "cctv")]
+    pub cctv: Option<bool>,
 }
 
 /// データの取得間隔
