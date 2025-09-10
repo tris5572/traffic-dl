@@ -1,4 +1,5 @@
-// RunOption型の定義
+use anyhow::{Context, Result};
+
 use crate::datetime;
 use crate::types::{Cli, Interval};
 
@@ -16,11 +17,11 @@ pub struct ExecutionOption {
 
 impl ExecutionOption {
     /// コマンドラインのオプションから、実行時のオプションを生成する
-    pub fn from_cli(cli: &Cli) -> Self {
+    pub fn from_cli(cli: &Cli) -> Result<Self> {
         // let interval = if cli.m5 { Interval::M5 } else { Interval::H1 };
 
-        let dt =
-            datetime::parse(&cli.date).expect("日時指定が解釈不能。YYYYMMDD 形式による指定が必要");
+        let dt = datetime::parse(&cli.date)
+            .with_context(|| format!("{} を日時指定として解釈不能", cli.date))?;
 
         // TODO: 後で実装する
         // 取得対象のセンサーの種類である常設トラカンとCCTVトラカンを設定する
@@ -36,6 +37,6 @@ impl ExecutionOption {
             type_cctv: type_cctv,
         };
 
-        execution_option
+        Ok(execution_option)
     }
 }
