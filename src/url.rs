@@ -23,6 +23,28 @@ pub fn create_url(input: DT, interval: Interval) -> String {
     }
 }
 
+/// ファイル名と取得先 URL のタプルのリストを生成する
+pub fn create_names_and_urls(datetime: DT, cli: &Cli) -> Vec<(String, String)> {
+    let mut output = vec![];
+
+    match datetime {
+        DT::YMD { ref string, .. } => {
+            let list = get_datetime_list_1h(&datetime);
+            for t in list {
+                let name = format!("{}", &string);
+                let url = format!(
+                    "{}道路種別='3' AND 時間コード={} AND 常時観測点コード=3310840",
+                    URL_1H, t
+                );
+                output.push((name, url));
+            }
+        }
+        DT::YMDH { string, .. } => {}
+    }
+
+    output
+}
+
 /// 1時間ごとのデータを取得するため、取得対象日時の配列を生成する
 /// - 年月日のみが指定されている場合は、1日分のリストを返す
 /// - 年月日と時が指定されている場合は、1時間分のみを返す

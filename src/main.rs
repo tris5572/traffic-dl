@@ -1,6 +1,8 @@
 use anyhow::Result;
 use clap::Parser;
 
+use crate::url::create_names_and_urls;
+
 mod datetime;
 mod execution_option;
 mod types;
@@ -14,14 +16,18 @@ async fn main() -> Result<()> {
     let args = types::Cli::parse();
 
     // RunOptionの作成
-    let run_option = execution_option::ExecutionOption::from_cli(&args);
+    // let run_option = execution_option::ExecutionOption::from_cli(&args);
 
-    let url = url::create_url(run_option.datetime, run_option.interval);
-    let content = get_data_from_url(&url).await?;
+    let dt = datetime::parse(&args.date).expect("日時指定が不正");
+
+    // let url = url::create_url(run_option.datetime, run_option.interval);
+    let names_and_urls = create_names_and_urls(dt, &args);
+    println!("{:?}", &names_and_urls);
+    // let content = get_data_from_url(&url).await?;
     // println!("{}", &content);
 
-    let filename = "output.txt";
-    save_to_file(&filename, &content).await?;
+    // let filename = "output.txt";
+    // save_to_file(&filename, &content).await?;
 
     Ok(())
 }
