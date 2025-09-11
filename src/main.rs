@@ -1,8 +1,6 @@
 use anyhow::Result;
 use clap::Parser;
 
-use crate::url::create_names_and_urls;
-
 mod datetime;
 mod execution_option;
 mod types;
@@ -19,7 +17,7 @@ async fn main() -> Result<()> {
 
     let dt = datetime::parse(&args.date).expect("日時指定が不正");
 
-    let names_and_urls = create_names_and_urls(dt, &execute_option);
+    let names_and_urls = url::create_names_and_urls(dt, &execute_option);
     println!("{:?}", &names_and_urls);
     // let content = get_data_from_url(&url).await?;
     // println!("{}", &content);
