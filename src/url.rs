@@ -2,8 +2,6 @@ use crate::datetime::DT;
 use crate::execution_option::ExecutionOption;
 use crate::types::*;
 
-const URL_1H: &str = "https://api.jartic-open-traffic.org/geoserver?service=WFS&version=2.0.0&request=GetFeature&typeNames=t_travospublic_measure_1h&srsName=EPSG:4326&outputFormat=application/json&exceptions=application/json&cql_filter=";
-const URL_5M: &str = "https://api.jartic-open-traffic.org/geoserver?service=WFS&version=2.0.0&request=GetFeature&typeNames=t_travospublic_measure_5m&srsName=EPSG:4326&outputFormat=application/json&exceptions=application/json&cql_filter=";
 const URL_1: &str = "https://api.jartic-open-traffic.org/geoserver?service=WFS&version=2.0.0&request=GetFeature&typeNames=";
 const URL_2: &str =
     "&srsName=EPSG:4326&outputFormat=application/json&exceptions=application/json&cql_filter=";
@@ -12,19 +10,73 @@ const URL_2: &str =
 pub fn create_names_and_urls(datetime: DT, option: &ExecutionOption) -> Vec<(String, String)> {
     let mut output = vec![];
 
-    match datetime {
-        DT::YMD { ref string, .. } => {
-            let list = get_datetime_list_1h(&datetime);
-            for t in list {
-                let name = format!("{}", &string);
-                let url = format!(
-                    "{}道路種別='3' AND 時間コード={} AND 常時観測点コード=3310840",
-                    URL_1H, t
-                );
-                output.push((name, url));
+    // 1時間ごとのデータ取得時
+    if option.interval_h1 {
+        match datetime {
+            // 年月日の指定時は、1日分のデータを取得
+            DT::YMD { .. } => {
+                let list = get_datetime_list_1h(&datetime);
+                for t in list {
+                    if option.road_highway {
+                        if option.type_permanent {
+                            let name = create_filename(
+                                &t,
+                                Interval::H1,
+                                RoadType::Highway,
+                                CounterType::Permanent,
+                            );
+                            let url = create_url(
+                                &t,
+                                Interval::H1,
+                                RoadType::Highway,
+                                CounterType::Permanent,
+                            );
+                            output.push((name, url));
+                        }
+                        if option.type_cctv {
+                            let name = create_filename(
+                                &t,
+                                Interval::H1,
+                                RoadType::Highway,
+                                CounterType::Cctv,
+                            );
+                            let url =
+                                create_url(&t, Interval::H1, RoadType::Highway, CounterType::Cctv);
+                            output.push((name, url));
+                        }
+                    }
+                    if option.road_normal {
+                        if option.type_permanent {
+                            let name = create_filename(
+                                &t,
+                                Interval::H1,
+                                RoadType::Normal,
+                                CounterType::Permanent,
+                            );
+                            let url = create_url(
+                                &t,
+                                Interval::H1,
+                                RoadType::Normal,
+                                CounterType::Permanent,
+                            );
+                            output.push((name, url));
+                        }
+                        if option.type_cctv {
+                            let name = create_filename(
+                                &t,
+                                Interval::H1,
+                                RoadType::Normal,
+                                CounterType::Cctv,
+                            );
+                            let url =
+                                create_url(&t, Interval::H1, RoadType::Normal, CounterType::Cctv);
+                            output.push((name, url));
+                        }
+                    }
+                }
             }
+            DT::YMDH { string, .. } => {}
         }
-        DT::YMDH { string, .. } => {}
     }
 
     output
@@ -52,7 +104,7 @@ pub fn get_datetime_list_1h(dt: &DT) -> Vec<String> {
 
 /// 保存に使用するファイル名(拡張子なし)を生成する
 fn create_filename(
-    dt: DT,
+    time: &str,
     interval: Interval,
     road_type: RoadType,
     counter_type: CounterType,
@@ -60,11 +112,6 @@ fn create_filename(
     let itv = match interval {
         Interval::H1 => "H",
         Interval::M5 => "M",
-    };
-
-    let ymd = match dt {
-        DT::YMD { ref string, .. } => string,
-        DT::YMDH { ref string, .. } => string,
     };
 
     let road = match road_type {
@@ -77,7 +124,7 @@ fn create_filename(
         CounterType::Cctv => "C",
     };
 
-    format!("{}{}_{}{}", itv, ymd, road, cnt)
+    format!("{}{}_{}{}", itv, time, road, cnt)
 }
 
 /// 取得対象のURLを生成する
