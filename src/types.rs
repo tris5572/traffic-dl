@@ -20,3 +20,30 @@ pub struct Cli {
     #[arg(long = "cctv")]
     pub cctv: Option<bool>,
 }
+
+/// データの取得間隔
+#[derive(Debug)]
+pub enum Interval {
+    /// 1時間ごと
+    H1,
+    /// 5分ごと
+    M5,
+}
+
+/// データの取得対象
+#[derive(Debug)]
+pub enum CounterType {
+    /// 常設トラカン
+    Permanent,
+    /// CCTVトラカン
+    Cctv,
+}
+
+/// 道路種別
+#[derive(Debug)]
+pub enum RoadType {
+    /// 高速自動車国道
+    Highway,
+    /// 一般国道
+    Normal,
+}
