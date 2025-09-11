@@ -47,6 +47,37 @@ pub fn get_datetime_list_1h(dt: &DT) -> Vec<String> {
     }
 }
 
+/// 保存に使用するファイル名(拡張子なし)を生成する
+fn create_filename(
+    dt: DT,
+    interval: Interval,
+    road_type: RoadType,
+    counter_type: CounterType,
+) -> String {
+    let itv = match interval {
+        Interval::H1 => "H",
+        Interval::M5 => "M",
+    };
+
+    let ymd = match dt {
+        DT::YMD { ref string, .. } => string,
+        DT::YMDH { ref string, .. } => string,
+    };
+
+    let road = match road_type {
+        RoadType::Highway => "H",
+        RoadType::Normal => "N",
+    };
+
+    let cnt = match counter_type {
+        CounterType::Permanent => "P",
+        CounterType::Cctv => "C",
+    };
+
+    format!("{}{}_{}{}", itv, ymd, road, cnt)
+}
+
+
 #[cfg(test)]
 mod get_datetime_list_1h_tests {
     use super::*;
