@@ -4,6 +4,9 @@ use crate::types::*;
 
 const URL_1H: &str = "https://api.jartic-open-traffic.org/geoserver?service=WFS&version=2.0.0&request=GetFeature&typeNames=t_travospublic_measure_1h&srsName=EPSG:4326&outputFormat=application/json&exceptions=application/json&cql_filter=";
 const URL_5M: &str = "https://api.jartic-open-traffic.org/geoserver?service=WFS&version=2.0.0&request=GetFeature&typeNames=t_travospublic_measure_5m&srsName=EPSG:4326&outputFormat=application/json&exceptions=application/json&cql_filter=";
+const URL_1: &str = "https://api.jartic-open-traffic.org/geoserver?service=WFS&version=2.0.0&request=GetFeature&typeNames=";
+const URL_2: &str =
+    "&srsName=EPSG:4326&outputFormat=application/json&exceptions=application/json&cql_filter=";
 
 /// ファイル名と取得先 URL のタプルのリストを生成する
 pub fn create_names_and_urls(datetime: DT, option: &ExecutionOption) -> Vec<(String, String)> {
@@ -77,6 +80,36 @@ fn create_filename(
     format!("{}{}_{}{}", itv, ymd, road, cnt)
 }
 
+/// 取得対象のURLを生成する
+fn create_url(
+    time: &str,
+    interval: Interval,
+    road_type: RoadType,
+    counter_type: CounterType,
+) -> String {
+    // 取得対象データの種別。カウンターの種類と間隔に基づく
+    let target = match counter_type {
+        CounterType::Permanent => match interval {
+            Interval::H1 => "t_travospublic_measure_1h",
+            Interval::M5 => "t_travospublic_measure_5m",
+        },
+        CounterType::Cctv => match interval {
+            Interval::H1 => "t_travospublic_measure_1h_img",
+            Interval::M5 => "t_travospublic_measure_5m_img",
+        },
+    };
+
+    let road = match road_type {
+        RoadType::Highway => "1",
+        RoadType::Normal => "3",
+    };
+
+    // TODO: 常時観測点コードはデバッグ用なので後で削除する
+    format!(
+        "{}{}{}道路種別='{}' AND 時間コード={} AND 常時観測点コード=3310840",
+        URL_1, target, URL_2, road, time
+    )
+}
 
 #[cfg(test)]
 mod get_datetime_list_1h_tests {
