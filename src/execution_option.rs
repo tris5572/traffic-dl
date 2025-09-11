@@ -22,18 +22,13 @@ pub struct ExecutionOption {
 impl ExecutionOption {
     /// コマンドラインの実行時オプションから、実際のコード実行時のオプションを生成する
     pub fn from_args(args: &Cli) -> Result<Self> {
-        let dt = datetime::parse(&args.date)
-            .with_context(|| format!("{} を日時指定として解釈不能", args.date))?;
+        let dt = datetime::parse(&args.date).with_context(|| format!("{} を日時指定として解釈不能", args.date))?;
 
         // 取得間隔
         // - 未指定時は1時間ごとのデータのみを取得
         // - `--5m` 指定時は、5分間ごとのデータのみを取得
         // - `--1h` と `--5m` の両方指定時は、両方のデータを取得
-        let h1 = if args.h1.is_none() && args.m5.is_some() {
-            false
-        } else {
-            true
-        };
+        let h1 = if args.h1.is_none() && args.m5.is_some() { false } else { true };
         let m5 = if args.m5.is_some() { true } else { false };
 
         // TODO: 後で実装する
