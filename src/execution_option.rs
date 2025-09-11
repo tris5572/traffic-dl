@@ -13,6 +13,10 @@ pub struct ExecutionOption {
     pub type_permanent: bool,
     /// CCTVトラカンを取得対象とするかどうか
     pub type_cctv: bool,
+    /// 高速自動車国道を取得対象とするかどうか
+    pub road_highway: bool,
+    /// 一般国道を取得対象とするかどうか
+    pub road_normal: bool,
 }
 
 impl ExecutionOption {
@@ -38,12 +42,18 @@ impl ExecutionOption {
         let type_permanent = true;
         let type_cctv = true;
 
+        // TODO: 道路種別の判定を追加する
+        let road_highway = false;
+        let road_normal = true;
+
         let execution_option = ExecutionOption {
             datetime: dt,
             interval_h1: h1,
             interval_m5: m5,
             type_permanent: type_permanent,
             type_cctv: type_cctv,
+            road_highway: road_highway,
+            road_normal: road_normal,
         };
 
         Ok(execution_option)
