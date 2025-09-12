@@ -18,26 +18,18 @@ pub fn create_names_and_urls(datetime: DT, option: &ExecutionOption) -> Vec<(Str
                 for t in list {
                     if option.road_highway {
                         if option.type_permanent {
-                            let name = create_filename(&t, Interval::H1, RoadType::Highway, CounterType::Permanent);
-                            let url = create_url(&t, Interval::H1, RoadType::Highway, CounterType::Permanent);
-                            output.push((name, url));
+                            output.push(get_target(&t, Interval::H1, RoadType::Highway, CounterType::Permanent));
                         }
                         if option.type_cctv {
-                            let name = create_filename(&t, Interval::H1, RoadType::Highway, CounterType::Cctv);
-                            let url = create_url(&t, Interval::H1, RoadType::Highway, CounterType::Cctv);
-                            output.push((name, url));
+                            output.push(get_target(&t, Interval::H1, RoadType::Highway, CounterType::Cctv));
                         }
                     }
                     if option.road_normal {
                         if option.type_permanent {
-                            let name = create_filename(&t, Interval::H1, RoadType::Normal, CounterType::Permanent);
-                            let url = create_url(&t, Interval::H1, RoadType::Normal, CounterType::Permanent);
-                            output.push((name, url));
+                            output.push(get_target(&t, Interval::H1, RoadType::Normal, CounterType::Permanent));
                         }
                         if option.type_cctv {
-                            let name = create_filename(&t, Interval::H1, RoadType::Normal, CounterType::Cctv);
-                            let url = create_url(&t, Interval::H1, RoadType::Normal, CounterType::Cctv);
-                            output.push((name, url));
+                            output.push(get_target(&t, Interval::H1, RoadType::Normal, CounterType::Cctv));
                         }
                     }
                 }
@@ -69,8 +61,16 @@ pub fn get_datetime_list_1h(dt: &DT) -> Vec<String> {
     }
 }
 
+/// 保存に使用するファイル名と取得先URLを取得する
+fn get_target(time: &str, interval: Interval, road_type: RoadType, counter_type: CounterType) -> (String, String) {
+    let name = create_filename(time, &interval, &road_type, &counter_type);
+    let url = create_url(time, &interval, &road_type, &counter_type);
+
+    (name, url)
+}
+
 /// 保存に使用するファイル名(拡張子なし)を生成する
-fn create_filename(time: &str, interval: Interval, road_type: RoadType, counter_type: CounterType) -> String {
+fn create_filename(time: &str, interval: &Interval, road_type: &RoadType, counter_type: &CounterType) -> String {
     let itv = match interval {
         Interval::H1 => "H",
         Interval::M5 => "M",
@@ -90,7 +90,7 @@ fn create_filename(time: &str, interval: Interval, road_type: RoadType, counter_
 }
 
 /// 取得対象のURLを生成する
-fn create_url(time: &str, interval: Interval, road_type: RoadType, counter_type: CounterType) -> String {
+fn create_url(time: &str, interval: &Interval, road_type: &RoadType, counter_type: &CounterType) -> String {
     // 取得対象データの種別。カウンターの種類と間隔に基づく
     let target = match counter_type {
         CounterType::Permanent => match interval {
