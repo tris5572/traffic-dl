@@ -19,6 +19,13 @@ pub struct Cli {
     /// CCTVトラカンのみを取得対象とする
     #[arg(long = "cctv")]
     pub cctv: Option<bool>,
+
+    /// 先頭の1つのファイルだけ取得・保存を実行する
+    #[arg(long = "one")]
+    pub one: bool,
+    /// ドライランとして、データの取得・保存を行わない
+    #[arg(long = "dry")]
+    pub dry: bool,
 }
 
 /// データの取得間隔

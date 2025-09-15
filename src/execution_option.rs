@@ -17,6 +17,10 @@ pub struct ExecutionOption {
     pub road_highway: bool,
     /// 一般国道を取得対象とするかどうか
     pub road_normal: bool,
+    /// 先頭の1つのみを対象とするかどうか
+    pub one: bool,
+    /// 実際のデータ取得を行わないドライランを行うかどうか
+    pub dry: bool,
 }
 
 impl ExecutionOption {
@@ -49,6 +53,8 @@ impl ExecutionOption {
             type_cctv: type_cctv,
             road_highway: road_highway,
             road_normal: road_normal,
+            one: args.one,
+            dry: args.dry,
         };
 
         Ok(execution_option)
@@ -67,6 +73,8 @@ mod execute_option_from_args_test {
             m5: None,
             permanent: None,
             cctv: None,
+            one: false,
+            dry: false,
         }
     }
 

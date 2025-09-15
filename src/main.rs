@@ -1,5 +1,6 @@
 use anyhow::Result;
 use clap::Parser;
+use tokio::time::{Duration, sleep};
 
 mod datetime;
 mod execution_option;
@@ -18,12 +19,25 @@ async fn main() -> Result<()> {
     let dt = datetime::parse(&args.date).expect("日時指定が不正");
 
     let names_and_urls = url::create_names_and_urls(dt, &execute_option);
-    println!("{:?}", &names_and_urls);
-    // let content = get_data_from_url(&url).await?;
-    // println!("{}", &content);
 
-    // let filename = "output.txt";
-    // save_to_file(&filename, &content).await?;
+    for (name, url) in names_and_urls {
+        // TODO: dry フラグを見て分岐する
+        if true {
+            println!("{} - {}", &name, &url);
+        } else {
+            // 実際にデータを取得してファイルとして保存する
+            let content = get_data_from_url(&url).await?;
+            save_to_file(&name, &content).await?;
+
+            if execute_option.one {
+                // `--one` が指定されているときは、最初の1つのみを処理して終了する
+                break;
+            } else {
+                // 取得頻度を下げるために間隔を開ける
+                sleep(Duration::from_secs(5)).await;
+            }
+        }
+    }
 
     Ok(())
 }
