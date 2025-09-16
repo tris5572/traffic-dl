@@ -27,7 +27,8 @@ async fn main() -> Result<()> {
         } else {
             // 実際にデータを取得してファイルとして保存する
             let content = get_data_from_url(&url).await?;
-            save_to_file(&name, &content).await?;
+            let path = format!("{}.json", name);
+            save_to_file(&path, "data", &content).await?;
 
             if execute_option.one {
                 // `--one` が指定されているときは、最初の1つのみを処理して終了する
@@ -50,8 +51,14 @@ async fn get_data_from_url(url: &str) -> Result<String> {
     Ok(text)
 }
 
-/// 指定した文字列をカレントディレクトリにファイルとして保存する。
-async fn save_to_file(filename: &str, content: &str) -> Result<()> {
-    tokio::fs::write(filename, content).await?;
+/// データを指定フォルダへ保存する。
+async fn save_to_file(filename: &str, dir: &str, content: &str) -> Result<()> {
+    // 出力先ディレクトリが存在しないときは作成する
+    if !std::path::Path::exists(&std::path::Path::new(dir)) {
+        std::fs::create_dir(dir)?;
+    }
+
+    let path = format!("{}/{}", dir, filename);
+    tokio::fs::write(&path, content).await?;
     Ok(())
 }
