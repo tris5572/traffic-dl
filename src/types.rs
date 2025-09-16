@@ -8,17 +8,17 @@ pub struct Cli {
 
     /// 1時間ごとのデータを取得 (デフォルト)
     #[arg(long = "1h")]
-    pub h1: Option<bool>,
+    pub h1: bool,
     /// 5分間隔のデータを取得。これのみの指定時、1時間ごとのデータ(--1h)を取得しない
     #[arg(long = "5m")]
-    pub m5: Option<bool>,
+    pub m5: bool,
 
     /// 常設トラカンのみを取得対象とする
     #[arg(long = "permanent")]
-    pub permanent: Option<bool>,
+    pub permanent: bool,
     /// CCTVトラカンのみを取得対象とする
     #[arg(long = "cctv")]
-    pub cctv: Option<bool>,
+    pub cctv: bool,
 
     /// 先頭の1つのファイルだけ取得・保存を実行する
     #[arg(long = "one")]
