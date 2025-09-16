@@ -21,8 +21,7 @@ async fn main() -> Result<()> {
     let names_and_urls = url::create_names_and_urls(dt, &execute_option);
 
     for (name, url) in names_and_urls {
-        // TODO: dry フラグを見て分岐する
-        if true {
+        if execute_option.dry {
             println!("{} - {}", &name, &url);
         } else {
             // 実際にデータを取得してファイルとして保存する
