@@ -34,7 +34,7 @@ async fn main() -> Result<()> {
                 break;
             } else {
                 // 取得頻度を下げるために間隔を開ける
-                sleep(Duration::from_secs(5)).await;
+                sleep(Duration::from_secs(1)).await;
             }
         }
     }
