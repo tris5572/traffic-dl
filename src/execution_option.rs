@@ -35,11 +35,10 @@ impl ExecutionOption {
         let h1 = if !args.h1 && args.m5 { false } else { true };
         let m5 = if args.m5 { true } else { false };
 
-        // TODO: 後で実装する
-        // 取得対象のセンサーの種類である常設トラカンとCCTVトラカンを設定する
+        // 取得対象のセンサー。常設トラカンとCCTVトラカン
         // 基本的には両方とも対象とするが、片方のみが実行時に指定された場合はそちらのみを対象にする。
-        let type_permanent = true;
-        let type_cctv = true;
+        let type_permanent = if !args.permanent && args.cctv { false } else { true };
+        let type_cctv = if args.permanent && !args.cctv { false } else { true };
 
         // TODO: 道路種別の判定を追加する
         let road_highway = false;
@@ -71,8 +70,8 @@ mod execute_option_from_args_test {
             date: "20250102".to_string(),
             h1: true,
             m5: false,
-            permanent: true,
-            cctv: true,
+            permanent: false,
+            cctv: false,
             one: false,
             dry: false,
         }
@@ -160,6 +159,55 @@ mod execute_option_from_args_test {
 
             assert!(result.interval_h1);
             assert!(result.interval_m5);
+        }
+    }
+
+    #[cfg(test)]
+    mod 取得対象 {
+        use super::*;
+
+        #[test]
+        fn nothing() {
+            let mut args = default_args();
+            args.permanent = false;
+            args.cctv = false;
+            let result = ExecutionOption::from_args(&args).unwrap();
+
+            assert!(result.type_permanent);
+            assert!(result.type_cctv);
+        }
+
+        #[test]
+        fn permanent() {
+            let mut args = default_args();
+            args.permanent = true;
+            args.cctv = false;
+            let result = ExecutionOption::from_args(&args).unwrap();
+
+            assert!(result.type_permanent);
+            assert!(!result.type_cctv);
+        }
+
+        #[test]
+        fn cctv() {
+            let mut args = default_args();
+            args.permanent = false;
+            args.cctv = true;
+            let result = ExecutionOption::from_args(&args).unwrap();
+
+            assert!(!result.type_permanent);
+            assert!(result.type_cctv);
+        }
+
+        #[test]
+        fn both() {
+            let mut args = default_args();
+            args.permanent = true;
+            args.cctv = true;
+            let result = ExecutionOption::from_args(&args).unwrap();
+
+            assert!(result.type_permanent);
+            assert!(result.type_cctv);
         }
     }
 }
