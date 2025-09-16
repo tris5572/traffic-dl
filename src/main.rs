@@ -7,9 +7,6 @@ mod execution_option;
 mod types;
 mod url;
 
-// const TEST_IP_URL: &str = "https://httpbin.org/ip";
-// const TEST_DATA_URL: &str = "https://api.jartic-open-traffic.org/geoserver?service=WFS&version=2.0.0&request=GetFeature&typeNames=t_travospublic_measure_1h&srsName=EPSG:4326&outputFormat=application/json&exceptions=application/json&cql_filter=道路種別='3' AND 時間コード=202509010900 AND 常時観測点コード=3310840";
-
 #[tokio::main]
 async fn main() -> Result<()> {
     let args = types::Cli::parse();
@@ -30,11 +27,9 @@ async fn main() -> Result<()> {
             save_to_file(&path, "data", &content).await?;
 
             if execute_option.one {
-                // `--one` が指定されているときは、最初の1つのみを処理して終了する
-                break;
+                break; // `--one` が指定されているときは、最初の1つのみを処理して終了する
             } else {
-                // 取得頻度を下げるために間隔を開ける
-                sleep(Duration::from_secs(1)).await;
+                sleep(Duration::from_secs(1)).await; // 取得頻度を下げるために間隔を開ける
             }
         }
     }

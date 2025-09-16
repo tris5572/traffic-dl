@@ -6,17 +6,24 @@ use crate::types::Cli;
 /// 実行時のオプションを保持する構造体
 #[derive(Debug)]
 pub struct ExecutionOption {
+    /// 日時指定
     pub datetime: datetime::DT,
+
+    /// 取得間隔：1時間ごと
     pub interval_h1: bool,
+    /// 取得間隔：5分ごと
     pub interval_m5: bool,
-    /// 常設トラカンを取得対象とするかどうか
+
+    /// 観測機器：常設トラカンを取得対象とするかどうか
     pub type_permanent: bool,
-    /// CCTVトラカンを取得対象とするかどうか
+    /// 観測機器：CCTVトラカンを取得対象とするかどうか
     pub type_cctv: bool,
-    /// 高速自動車国道を取得対象とするかどうか
+
+    /// 道路種別：高速自動車国道を取得対象とするかどうか
     pub road_highway: bool,
-    /// 一般国道を取得対象とするかどうか
+    /// 道路種別：一般国道を取得対象とするかどうか
     pub road_normal: bool,
+
     /// 先頭の1つのみを対象とするかどうか
     pub one: bool,
     /// 実際のデータ取得を行わないドライランを行うかどうか
