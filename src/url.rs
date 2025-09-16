@@ -108,11 +108,9 @@ fn create_url(time: &str, interval: &Interval, road_type: &RoadType, counter_typ
         RoadType::Normal => "3",
     };
 
-    // TODO: 常時観測点コードはデバッグ用なので後で削除する
-    format!(
-        "{}{}{}道路種別='{}' AND 時間コード={} AND 常時観測点コード=3310840",
-        URL_1, target, URL_2, road, time
-    )
+    // NOTE: デバッグ用に常時観測点コードを絞る場合は、以下のように設定する
+    // "{}{}{}道路種別='{}' AND 時間コード={} AND 常時観測点コード=3310840",
+    format!("{}{}{}道路種別='{}' AND 時間コード={}", URL_1, target, URL_2, road, time)
 }
 
 #[cfg(test)]
