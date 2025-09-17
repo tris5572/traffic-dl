@@ -47,9 +47,10 @@ impl ExecutionOption {
         let type_permanent = if !args.permanent && args.cctv { false } else { true };
         let type_cctv = if args.permanent && !args.cctv { false } else { true };
 
-        // TODO: 道路種別の判定を追加する
-        let road_highway = false;
-        let road_normal = true;
+        // 道路種別
+        // 未指定時は両方を対象とするが、片方のみが実行時に指定された場合はそちらのみを対象にする。
+        let road_highway = if !args.highway && args.normal { false } else { true };
+        let road_normal = if args.highway && !args.normal { false } else { true };
 
         let execution_option = ExecutionOption {
             datetime: dt,
@@ -79,6 +80,8 @@ mod execute_option_from_args_test {
             m5: false,
             permanent: false,
             cctv: false,
+            highway: true,
+            normal: true,
             one: false,
             dry: false,
         }
@@ -215,6 +218,55 @@ mod execute_option_from_args_test {
 
             assert!(result.type_permanent);
             assert!(result.type_cctv);
+        }
+    }
+
+    #[cfg(test)]
+    mod 道路種別 {
+        use super::*;
+
+        #[test]
+        fn nothing() {
+            let mut args = default_args();
+            args.highway = false;
+            args.normal = false;
+            let result = ExecutionOption::from_args(&args).unwrap();
+
+            assert!(result.road_highway);
+            assert!(result.road_normal);
+        }
+
+        #[test]
+        fn highway() {
+            let mut args = default_args();
+            args.highway = true;
+            args.normal = false;
+            let result = ExecutionOption::from_args(&args).unwrap();
+
+            assert!(result.road_highway);
+            assert!(!result.road_normal);
+        }
+
+        #[test]
+        fn cctv() {
+            let mut args = default_args();
+            args.highway = false;
+            args.normal = true;
+            let result = ExecutionOption::from_args(&args).unwrap();
+
+            assert!(!result.road_highway);
+            assert!(result.road_normal);
+        }
+
+        #[test]
+        fn both() {
+            let mut args = default_args();
+            args.highway = true;
+            args.normal = true;
+            let result = ExecutionOption::from_args(&args).unwrap();
+
+            assert!(result.road_highway);
+            assert!(result.road_normal);
         }
     }
 }

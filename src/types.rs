@@ -20,6 +20,13 @@ pub struct Cli {
     #[arg(long = "cctv")]
     pub cctv: bool,
 
+    /// 道路種別：高速自動車国道のみを取得対象とする
+    #[arg(long = "highway")]
+    pub highway: bool,
+    /// 道路種別：一般国道のみを取得対象とする
+    #[arg(long = "normal")]
+    pub normal: bool,
+
     /// 先頭の1つのデータのみ取得・保存を実行する
     #[arg(long = "one")]
     pub one: bool,
