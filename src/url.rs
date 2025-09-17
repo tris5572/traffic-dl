@@ -12,8 +12,7 @@ pub fn create_names_and_urls(datetime: DT, option: &ExecutionOption) -> Vec<(Str
     // 1時間ごとのデータ取得時
     if option.interval_h1 {
         match datetime {
-            // 年月日の指定時は、1日分のデータを取得
-            DT::YMD { .. } => {
+            DT::YMD { .. } | DT::YMDH { .. } => {
                 let list = get_datetime_list_1h(&datetime);
                 for t in list {
                     if option.road_highway {
@@ -34,7 +33,6 @@ pub fn create_names_and_urls(datetime: DT, option: &ExecutionOption) -> Vec<(Str
                     }
                 }
             }
-            DT::YMDH { string, .. } => {}
         }
     }
 
