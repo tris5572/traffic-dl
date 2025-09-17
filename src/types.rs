@@ -13,10 +13,10 @@ pub struct Cli {
     #[arg(long = "5m")]
     pub m5: bool,
 
-    /// 道路種別：常設トラカンのみを取得対象とする
+    /// 観測機器：常設トラカンのみを取得対象とする
     #[arg(long = "permanent")]
     pub permanent: bool,
-    /// 道路種別：CCTVトラカンのみを取得対象とする
+    /// 観測機器：CCTVトラカンのみを取得対象とする
     #[arg(long = "cctv")]
     pub cctv: bool,
 
@@ -37,7 +37,7 @@ pub enum Interval {
     M5,
 }
 
-/// データの取得対象
+/// 観測機器
 #[derive(Debug)]
 pub enum CounterType {
     /// 常設トラカン
