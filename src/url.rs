@@ -14,22 +14,14 @@ pub fn create_names_and_urls(datetime: DT, option: &ExecutionOption) -> Vec<(Str
         match datetime {
             DT::YMD { .. } | DT::YMDH { .. } => {
                 let list = get_datetime_list_1h(&datetime);
+                let road_type = option.road_type();
+
                 for t in list {
-                    if option.road_highway {
-                        if option.type_permanent {
-                            output.push(get_target(&t, Interval::H1, RoadType::Highway, CounterType::Permanent));
-                        }
-                        if option.type_cctv {
-                            output.push(get_target(&t, Interval::H1, RoadType::Highway, CounterType::Cctv));
-                        }
+                    if option.type_permanent {
+                        output.push(get_target(&t, &Interval::H1, &road_type, &CounterType::Permanent));
                     }
-                    if option.road_normal {
-                        if option.type_permanent {
-                            output.push(get_target(&t, Interval::H1, RoadType::Normal, CounterType::Permanent));
-                        }
-                        if option.type_cctv {
-                            output.push(get_target(&t, Interval::H1, RoadType::Normal, CounterType::Cctv));
-                        }
+                    if option.type_cctv {
+                        output.push(get_target(&t, &Interval::H1, &road_type, &CounterType::Cctv));
                     }
                 }
             }
@@ -62,7 +54,7 @@ pub fn get_datetime_list_1h(dt: &DT) -> Vec<String> {
 }
 
 /// 保存に使用するファイル名と取得先URLを取得する
-fn get_target(time: &str, interval: Interval, road_type: RoadType, counter_type: CounterType) -> (String, String) {
+fn get_target(time: &str, interval: &Interval, road_type: &RoadType, counter_type: &CounterType) -> (String, String) {
     let name = create_filename(time, &interval, &road_type, &counter_type);
     let url = create_url(time, &interval, &road_type, &counter_type);
 
@@ -70,15 +62,10 @@ fn get_target(time: &str, interval: Interval, road_type: RoadType, counter_type:
 }
 
 /// 保存に使用するファイル名(拡張子なし)を生成する
-fn create_filename(time: &str, interval: &Interval, road_type: &RoadType, counter_type: &CounterType) -> String {
+fn create_filename(time: &str, interval: &Interval, _road_type: &RoadType, counter_type: &CounterType) -> String {
     let itv = match interval {
         Interval::H1 => "H",
         Interval::M5 => "M",
-    };
-
-    let road = match road_type {
-        RoadType::Highway => "H",
-        RoadType::Normal => "N",
     };
 
     let cnt = match counter_type {
@@ -86,7 +73,9 @@ fn create_filename(time: &str, interval: &Interval, road_type: &RoadType, counte
         CounterType::Cctv => "C",
     };
 
-    format!("{}{}_{}{}", itv, time, road, cnt)
+    // NOTE: 道路種別はまとめて取得するため、ファイル名には反映しない
+
+    format!("{}{}{}", itv, time, cnt)
 }
 
 /// 取得対象のURLを生成する
@@ -104,13 +93,16 @@ fn create_url(time: &str, interval: &Interval, road_type: &RoadType, counter_typ
     };
 
     let road = match road_type {
-        RoadType::Highway => "1",
-        RoadType::Normal => "3",
+        RoadType::Highway => "道路種別='1'",
+        RoadType::Normal => "道路種別='3'",
+        RoadType::Both => "道路種別='1' OR 道路種別='3'",
     };
 
     // NOTE: デバッグ用に常時観測点コードを絞る場合は、以下のように設定する
     // "{}{}{}道路種別='{}' AND 時間コード={} AND 常時観測点コード=3310840",
-    format!("{}{}{}道路種別='{}' AND 時間コード={}", URL_1, target, URL_2, road, time)
+
+    // NOTE: 道路種別は OR 条件で複数指定されることがあるため、 () でくくる
+    format!("{}{}{}({}) AND 時間コード={}", URL_1, target, URL_2, road, time)
 }
 
 #[cfg(test)]

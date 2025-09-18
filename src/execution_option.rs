@@ -1,7 +1,7 @@
 use anyhow::{Context, Result};
 
 use crate::datetime;
-use crate::types::Cli;
+use crate::types::{Cli, RoadType};
 
 /// 実行時のオプションを保持する構造体
 #[derive(Debug)]
@@ -65,6 +65,18 @@ impl ExecutionOption {
         };
 
         Ok(execution_option)
+    }
+
+    /// 道路種別の enum を取得する
+    pub fn road_type(&self) -> RoadType {
+        if self.road_highway && !self.road_normal {
+            RoadType::Highway
+        } else if !self.road_highway && self.road_normal {
+            RoadType::Normal
+        } else {
+            // 両方 true のときと、実際には存在しないはずの両方とも false のとき
+            RoadType::Both
+        }
     }
 }
 

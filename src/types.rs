@@ -60,4 +60,6 @@ pub enum RoadType {
     Highway,
     /// 一般国道
     Normal,
+    /// 高速自動車国道と一般国道の両方
+    Both,
 }
