@@ -33,6 +33,7 @@ pub fn create_names_and_urls(datetime: DT, option: &ExecutionOption) -> Vec<(Str
                     }
                 }
             }
+            _ => {}
         }
     }
 
@@ -56,6 +57,7 @@ pub fn get_datetime_list_1h(dt: &DT) -> Vec<String> {
         DT::YMDH { string, .. } => {
             vec![format!("{}00", string)]
         }
+        _ => vec![],
     }
 }
 

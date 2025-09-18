@@ -15,9 +15,31 @@ pub enum DT {
         day: u32,
         hour: u32,
     },
+    YMDHM {
+        string: String,
+        year: i32,
+        month: u32,
+        day: u32,
+        hour: u32,
+        minute: u32,
+    },
 }
 
 pub fn parse(input: &str) -> Option<DT> {
+    // YYYYMMDDHHMM
+    let result = NaiveDateTime::parse_from_str(&format!("{}", input), "%Y%m%d%H%M");
+    if let Ok(dt) = result {
+        let dt = DT::YMDHM {
+            string: input.to_string(),
+            year: dt.year(),
+            month: dt.month(),
+            day: dt.day(),
+            hour: dt.hour(),
+            minute: dt.minute(),
+        };
+        return Some(dt);
+    }
+
     // YYYYMMDDHH
     // chrono のパースでは「分」の指定が必須であるため、10文字だったときは`00` を追加して分があるものとして解釈してみる
     if input.len() == 10 {
@@ -53,6 +75,33 @@ pub fn parse(input: &str) -> Option<DT> {
 #[cfg(test)]
 mod parse_tests {
     use super::*;
+
+    #[test]
+    fn yyyymmddhhmm() {
+        assert_eq!(
+            parse("202501020304"),
+            Some(DT::YMDHM {
+                string: "202501020304".into(),
+                year: 2025,
+                month: 1,
+                day: 2,
+                hour: 3,
+                minute: 4
+            })
+        );
+        assert_eq!(
+            parse("202512312359"),
+            Some(DT::YMDHM {
+                string: "202512312359".into(),
+                year: 2025,
+                month: 12,
+                day: 31,
+                hour: 23,
+                minute: 59
+            })
+        );
+        assert!(parse("202501022400").is_none());
+    }
 
     #[test]
     fn yyyymmddhh() {
