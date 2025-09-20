@@ -135,21 +135,16 @@ mod tests {
     #[cfg(test)]
     mod get_datetime_list_1h {
         use super::*;
+        use crate::datetime;
 
         #[test]
         fn ymd() {
-            let dt = DT::YMD {
-                string: "20250102".to_string(),
-                year: 2025,
-                month: 1,
-                day: 2,
-            };
+            let dt = datetime::parse("20250102").unwrap();
 
             let result = get_datetime_list_1h(&dt);
 
             // 24時間分のデータが返されることを確認
             assert_eq!(result.len(), 24);
-
             // 各要素が正しい形式であること確認
             for (i, datetime) in result.iter().enumerate() {
                 let expected_hour = format!("{:02}", i);
@@ -159,19 +154,12 @@ mod tests {
 
         #[test]
         fn ymdh() {
-            let dt = DT::YMDH {
-                string: "2025010203".to_string(),
-                year: 2025,
-                month: 1,
-                day: 2,
-                hour: 3,
-            };
+            let dt = datetime::parse("2025010203").unwrap();
 
             let result = get_datetime_list_1h(&dt);
 
             // 1時間分のみが返されることを確認
             assert_eq!(result.len(), 1);
-
             // 返された要素が正しい形式であること確認
             assert_eq!(result[0], "202501020300");
         }
@@ -180,22 +168,16 @@ mod tests {
     #[cfg(test)]
     mod get_datetime_list_5m {
         use super::*;
+        use crate::datetime;
 
         #[test]
         fn ymdh() {
-            let dt = DT::YMDH {
-                string: "2025010203".to_string(),
-                year: 2025,
-                month: 1,
-                day: 2,
-                hour: 3,
-            };
+            let dt = datetime::parse("2025010203").unwrap();
 
             let result = get_datetime_list_5m(&dt);
 
             // 1時間分のデータが返されることを確認
             assert_eq!(result.len(), 12);
-
             // 各要素が正しい形式であること確認
             for (i, datetime) in result.iter().enumerate() {
                 let expected_min = format!("{:02}", i * 5);
@@ -205,14 +187,7 @@ mod tests {
 
         #[test]
         fn ymdhm() {
-            let dt = DT::YMDHM {
-                string: "202501020304".to_string(),
-                year: 2025,
-                month: 1,
-                day: 2,
-                hour: 3,
-                minute: 4,
-            };
+            let dt = datetime::parse("202501020304").unwrap();
 
             let result = get_datetime_list_5m(&dt);
 
