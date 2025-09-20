@@ -53,6 +53,25 @@ pub fn get_datetime_list_1h(dt: &DT) -> Vec<String> {
     }
 }
 
+/// 5分ごとのデータを取得するため、取得対象日時の配列を生成する
+/// - 年月日が指定されている場合は、1日分のリストを返す
+/// - 年月日と時が指定されている場合は、1時間分のリストを返す
+/// - 年月日と時分が指定されている場合は、当該時分のみのリストを返す
+/// - それ以外の場合は空配列を返す
+pub fn get_datetime_list_5m(dt: &DT) -> Vec<String> {
+    match dt {
+        DT::YMDH { string, .. } => {
+            let mut output = Vec::new();
+            for min in (0..60).step_by(5) {
+                let min_str = format!("{:02}", min);
+                output.push(format!("{}{}", string, min_str));
+            }
+            output
+        }
+        _ => vec![],
+    }
+}
+
 /// 保存に使用するファイル名と取得先URLを取得する
 fn get_target(time: &str, interval: &Interval, road_type: &RoadType, counter_type: &CounterType) -> (String, String) {
     let name = create_filename(time, &interval, &road_type, &counter_type);
@@ -151,6 +170,33 @@ mod tests {
 
             // 返された要素が正しい形式であること確認
             assert_eq!(result[0], "202501020300");
+        }
+    }
+
+    #[cfg(test)]
+    mod get_datetime_list_5m {
+        use super::*;
+
+        #[test]
+        fn ymdh() {
+            let dt = DT::YMDH {
+                string: "2025010203".to_string(),
+                year: 2025,
+                month: 1,
+                day: 2,
+                hour: 3,
+            };
+
+            let result = get_datetime_list_5m(&dt);
+
+            // 1時間分のデータが返されることを確認
+            assert_eq!(result.len(), 12);
+
+            // 各要素が正しい形式であること確認
+            for (i, datetime) in result.iter().enumerate() {
+                let expected_min = format!("{:02}", i * 5);
+                assert_eq!(datetime, &format!("2025010203{}", expected_min));
+            }
         }
     }
 }
