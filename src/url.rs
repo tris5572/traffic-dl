@@ -106,46 +106,51 @@ fn create_url(time: &str, interval: &Interval, road_type: &RoadType, counter_typ
 }
 
 #[cfg(test)]
-mod get_datetime_list_1h_tests {
+mod tests {
     use super::*;
 
-    #[test]
-    fn test_get_datetime_list_1h_for_ymd() {
-        let dt = DT::YMD {
-            string: "20250102".to_string(),
-            year: 2025,
-            month: 1,
-            day: 2,
-        };
+    #[cfg(test)]
+    mod get_datetime_list_1h {
+        use super::*;
 
-        let result = get_datetime_list_1h(&dt);
+        #[test]
+        fn ymd() {
+            let dt = DT::YMD {
+                string: "20250102".to_string(),
+                year: 2025,
+                month: 1,
+                day: 2,
+            };
 
-        // 24時間分のデータが返されることを確認
-        assert_eq!(result.len(), 24);
+            let result = get_datetime_list_1h(&dt);
 
-        // 各要素が正しい形式であること確認
-        for (i, datetime) in result.iter().enumerate() {
-            let expected_hour = format!("{:02}", i);
-            assert_eq!(datetime, &format!("20250102{}00", expected_hour));
+            // 24時間分のデータが返されることを確認
+            assert_eq!(result.len(), 24);
+
+            // 各要素が正しい形式であること確認
+            for (i, datetime) in result.iter().enumerate() {
+                let expected_hour = format!("{:02}", i);
+                assert_eq!(datetime, &format!("20250102{}00", expected_hour));
+            }
         }
-    }
 
-    #[test]
-    fn test_get_datetime_list_1h_for_ymdh() {
-        let dt = DT::YMDH {
-            string: "2025010203".to_string(),
-            year: 2025,
-            month: 1,
-            day: 2,
-            hour: 3,
-        };
+        #[test]
+        fn ymdh() {
+            let dt = DT::YMDH {
+                string: "2025010203".to_string(),
+                year: 2025,
+                month: 1,
+                day: 2,
+                hour: 3,
+            };
 
-        let result = get_datetime_list_1h(&dt);
+            let result = get_datetime_list_1h(&dt);
 
-        // 1時間分のみが返されることを確認
-        assert_eq!(result.len(), 1);
+            // 1時間分のみが返されることを確認
+            assert_eq!(result.len(), 1);
 
-        // 返された要素が正しい形式であること確認
-        assert_eq!(result[0], "202501020300");
+            // 返された要素が正しい形式であること確認
+            assert_eq!(result[0], "202501020300");
+        }
     }
 }
