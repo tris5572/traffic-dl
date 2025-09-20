@@ -68,6 +68,10 @@ pub fn get_datetime_list_5m(dt: &DT) -> Vec<String> {
             }
             output
         }
+        DT::YMDHM { string, .. } => {
+            // 分の指定が 5 の倍数でなくても、サーバー側で切り捨てられるため問題ない
+            vec![format!("{}", string)]
+        }
         _ => vec![],
     }
 }
@@ -197,6 +201,25 @@ mod tests {
                 let expected_min = format!("{:02}", i * 5);
                 assert_eq!(datetime, &format!("2025010203{}", expected_min));
             }
+        }
+
+        #[test]
+        fn ymdhm() {
+            let dt = DT::YMDHM {
+                string: "202501020304".to_string(),
+                year: 2025,
+                month: 1,
+                day: 2,
+                hour: 3,
+                minute: 4,
+            };
+
+            let result = get_datetime_list_5m(&dt);
+
+            // 1時間分のみが返されることを確認
+            assert_eq!(result.len(), 1);
+            // 返された要素が正しい形式であること確認
+            assert_eq!(result[0], "202501020304");
         }
     }
 }
