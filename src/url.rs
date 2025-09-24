@@ -60,6 +60,16 @@ pub fn get_datetime_list_1h(dt: &DT) -> Vec<String> {
 /// - それ以外の場合は空配列を返す
 pub fn get_datetime_list_5m(dt: &DT) -> Vec<String> {
     match dt {
+        DT::YMD { string, .. } => {
+            let mut output = Vec::new();
+            for h in 0..24 {
+                for m in (0..60).step_by(5) {
+                    let hm_str = format!("{:02}{:02}", h, m);
+                    output.push(format!("{}{}", string, hm_str));
+                }
+            }
+            output
+        }
         DT::YMDH { string, .. } => {
             let mut output = Vec::new();
             for m in (0..60).step_by(5) {
@@ -169,6 +179,23 @@ mod tests {
     mod get_datetime_list_5m {
         use super::*;
         use crate::datetime;
+
+        #[test]
+        fn ymd() {
+            let dt = datetime::parse("20250102").unwrap();
+
+            let result = get_datetime_list_5m(&dt);
+
+            // 1日分のデータが返されることを確認
+            assert_eq!(result.len(), 288);
+            // 各要素が正しい形式であること確認
+            for (i, datetime) in result.iter().enumerate() {
+                let h = i / 12;
+                let m = i % 12;
+                let expected_hm = format!("{:02}{:02}", h, m * 5);
+                assert_eq!(datetime, &format!("20250102{}", expected_hm));
+            }
+        }
 
         #[test]
         fn ymdh() {
