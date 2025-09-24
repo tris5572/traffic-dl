@@ -40,9 +40,9 @@ pub fn get_datetime_list_1h(dt: &DT) -> Vec<String> {
     match dt {
         DT::YMD { string, .. } => {
             let mut output = Vec::new();
-            for hour in 0..24 {
-                let hour_str = format!("{:02}", hour);
-                output.push(format!("{}{}00", string, hour_str));
+            for h in 0..24 {
+                let h_str = format!("{:02}", h);
+                output.push(format!("{}{}00", string, h_str));
             }
             output
         }
@@ -62,9 +62,9 @@ pub fn get_datetime_list_5m(dt: &DT) -> Vec<String> {
     match dt {
         DT::YMDH { string, .. } => {
             let mut output = Vec::new();
-            for min in (0..60).step_by(5) {
-                let min_str = format!("{:02}", min);
-                output.push(format!("{}{}", string, min_str));
+            for m in (0..60).step_by(5) {
+                let m_str = format!("{:02}", m);
+                output.push(format!("{}{}", string, m_str));
             }
             output
         }
