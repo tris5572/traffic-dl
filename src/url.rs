@@ -29,6 +29,21 @@ pub fn create_names_and_urls(datetime: DT, option: &ExecutionOption) -> Vec<(Str
         }
     }
 
+    // 5分間ごとのデータ取得時
+    if option.interval_m5 {
+        let list = get_datetime_list_5m(&datetime);
+        let road_type = option.road_type();
+
+        for t in list {
+            if option.type_permanent {
+                output.push(get_target(&t, &Interval::M5, &road_type, &CounterType::Permanent));
+            }
+            if option.type_cctv {
+                output.push(get_target(&t, &Interval::M5, &road_type, &CounterType::Cctv));
+            }
+        }
+    }
+
     output
 }
 
