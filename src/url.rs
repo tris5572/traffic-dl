@@ -97,7 +97,6 @@ pub fn get_datetime_list_5m(dt: &DT) -> Vec<String> {
             // 分の指定が 5 の倍数でなくても、サーバー側で切り捨てられるため問題ない
             vec![format!("{}", string)]
         }
-        _ => vec![],
     }
 }
 
