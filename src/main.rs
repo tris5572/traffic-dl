@@ -13,9 +13,7 @@ async fn main() -> Result<()> {
 
     let execute_option = execution_option::ExecutionOption::from_args(&args)?;
 
-    let dt = datetime::parse(&args.date).expect("日時指定が不正");
-
-    let names_and_urls = url::create_names_and_urls(dt, &execute_option);
+    let names_and_urls = url::create_names_and_urls(&execute_option);
 
     for (name, url) in names_and_urls {
         if execute_option.dry {

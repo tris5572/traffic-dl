@@ -6,14 +6,14 @@ const URL_1: &str = "https://api.jartic-open-traffic.org/geoserver?service=WFS&v
 const URL_2: &str = "&srsName=EPSG:4326&outputFormat=application/json&exceptions=application/json&cql_filter=";
 
 /// ファイル名と取得先 URL のタプルのリストを生成する
-pub fn create_names_and_urls(datetime: DT, option: &ExecutionOption) -> Vec<(String, String)> {
+pub fn create_names_and_urls(option: &ExecutionOption) -> Vec<(String, String)> {
     let mut output = vec![];
 
     // 1時間ごとのデータ取得時
     if option.interval_h1 {
-        match datetime {
+        match option.datetime {
             DT::YMD { .. } | DT::YMDH { .. } => {
-                let list = get_datetime_list_1h(&datetime);
+                let list = get_datetime_list_1h(&option.datetime);
                 let road_type = option.road_type();
 
                 for t in list {
@@ -31,7 +31,7 @@ pub fn create_names_and_urls(datetime: DT, option: &ExecutionOption) -> Vec<(Str
 
     // 5分間ごとのデータ取得時
     if option.interval_m5 {
-        let list = get_datetime_list_5m(&datetime);
+        let list = get_datetime_list_5m(&option.datetime);
         let road_type = option.road_type();
 
         for t in list {
