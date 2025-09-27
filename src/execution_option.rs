@@ -39,18 +39,18 @@ impl ExecutionOption {
         // - 未指定時は1時間ごとのデータのみを取得
         // - `--5m` 指定時は、5分間ごとのデータのみを取得
         // - `--1h` と `--5m` の両方指定時は、両方のデータを取得
-        let h1 = if !args.h1 && args.m5 { false } else { true };
-        let m5 = if args.m5 { true } else { false };
+        let h1 = args.h1 || !args.m5;
+        let m5 = args.m5;
 
         // 取得対象のセンサー。常設トラカンとCCTVトラカン
         // 基本的には両方とも対象とするが、片方のみが実行時に指定された場合はそちらのみを対象にする。
-        let type_permanent = if !args.permanent && args.cctv { false } else { true };
-        let type_cctv = if args.permanent && !args.cctv { false } else { true };
+        let type_permanent = args.permanent || !args.cctv;
+        let type_cctv = !args.permanent || args.cctv;
 
         // 道路種別
         // 未指定時は両方を対象とするが、片方のみが実行時に指定された場合はそちらのみを対象にする。
-        let road_highway = if !args.highway && args.normal { false } else { true };
-        let road_normal = if args.highway && !args.normal { false } else { true };
+        let road_highway = args.highway || !args.normal;
+        let road_normal = !args.highway || args.normal;
 
         let execution_option = ExecutionOption {
             datetime: dt,
