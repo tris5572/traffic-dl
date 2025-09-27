@@ -12,7 +12,7 @@ pub fn create_names_and_urls(option: &ExecutionOption) -> Vec<(String, String)> 
     // 1時間ごとのデータ取得時
     if option.interval_h1 {
         match option.datetime {
-            DT::YMD { .. } | DT::YMDH { .. } => {
+            DT::Ymd { .. } | DT::Ymdh { .. } => {
                 let list = get_datetime_list_1h(&option.datetime);
                 let road_type = option.road_type();
 
@@ -53,7 +53,7 @@ pub fn create_names_and_urls(option: &ExecutionOption) -> Vec<(String, String)> 
 /// - それ以外の場合は空配列を返す
 pub fn get_datetime_list_1h(dt: &DT) -> Vec<String> {
     match dt {
-        DT::YMD { string, .. } => {
+        DT::Ymd { string, .. } => {
             let mut output = Vec::new();
             for h in 0..24 {
                 let h_str = format!("{:02}", h);
@@ -61,7 +61,7 @@ pub fn get_datetime_list_1h(dt: &DT) -> Vec<String> {
             }
             output
         }
-        DT::YMDH { string, .. } => {
+        DT::Ymdh { string, .. } => {
             vec![format!("{}00", string)]
         }
         _ => vec![],
@@ -75,7 +75,7 @@ pub fn get_datetime_list_1h(dt: &DT) -> Vec<String> {
 /// - それ以外の場合は空配列を返す
 pub fn get_datetime_list_5m(dt: &DT) -> Vec<String> {
     match dt {
-        DT::YMD { string, .. } => {
+        DT::Ymd { string, .. } => {
             let mut output = Vec::new();
             for h in 0..24 {
                 for m in (0..60).step_by(5) {
@@ -85,7 +85,7 @@ pub fn get_datetime_list_5m(dt: &DT) -> Vec<String> {
             }
             output
         }
-        DT::YMDH { string, .. } => {
+        DT::Ymdh { string, .. } => {
             let mut output = Vec::new();
             for m in (0..60).step_by(5) {
                 let m_str = format!("{:02}", m);
@@ -93,7 +93,7 @@ pub fn get_datetime_list_5m(dt: &DT) -> Vec<String> {
             }
             output
         }
-        DT::YMDHM { string, .. } => {
+        DT::Ymdhm { string, .. } => {
             // 分の指定が 5 の倍数でなくても、サーバー側で切り捨てられるため問題ない
             vec![format!("{}", string)]
         }

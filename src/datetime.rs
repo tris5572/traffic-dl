@@ -2,20 +2,20 @@ use chrono::{Datelike, NaiveDate, NaiveDateTime, Timelike};
 
 #[derive(Debug, PartialEq)]
 pub enum DT {
-    YMD {
+    Ymd {
         string: String,
         year: i32,
         month: u32,
         day: u32,
     },
-    YMDH {
+    Ymdh {
         string: String,
         year: i32,
         month: u32,
         day: u32,
         hour: u32,
     },
-    YMDHM {
+    Ymdhm {
         string: String,
         year: i32,
         month: u32,
@@ -29,7 +29,7 @@ pub fn parse(input: &str) -> Option<DT> {
     // YYYYMMDDHHMM
     let result = NaiveDateTime::parse_from_str(input, "%Y%m%d%H%M");
     if let Ok(dt) = result {
-        let dt = DT::YMDHM {
+        let dt = DT::Ymdhm {
             string: input.to_string(),
             year: dt.year(),
             month: dt.month(),
@@ -45,7 +45,7 @@ pub fn parse(input: &str) -> Option<DT> {
     if input.len() == 10 {
         let result = NaiveDateTime::parse_from_str(&format!("{}00", input), "%Y%m%d%H%M");
         if let Ok(dt) = result {
-            let dt = DT::YMDH {
+            let dt = DT::Ymdh {
                 string: input.to_string(),
                 year: dt.year(),
                 month: dt.month(),
@@ -59,7 +59,7 @@ pub fn parse(input: &str) -> Option<DT> {
     // YYYYMMDD
     let result = NaiveDate::parse_from_str(input, "%Y%m%d");
     if let Ok(ymd) = result {
-        let dt = DT::YMD {
+        let dt = DT::Ymd {
             string: input.to_string(),
             year: ymd.year(),
             month: ymd.month(),
@@ -80,7 +80,7 @@ mod parse_tests {
     fn yyyymmddhhmm() {
         assert_eq!(
             parse("202501020304"),
-            Some(DT::YMDHM {
+            Some(DT::Ymdhm {
                 string: "202501020304".into(),
                 year: 2025,
                 month: 1,
@@ -91,7 +91,7 @@ mod parse_tests {
         );
         assert_eq!(
             parse("202512312359"),
-            Some(DT::YMDHM {
+            Some(DT::Ymdhm {
                 string: "202512312359".into(),
                 year: 2025,
                 month: 12,
@@ -107,7 +107,7 @@ mod parse_tests {
     fn yyyymmddhh() {
         assert_eq!(
             parse("2025010203"),
-            Some(DT::YMDH {
+            Some(DT::Ymdh {
                 string: "2025010203".into(),
                 year: 2025,
                 month: 1,
@@ -117,7 +117,7 @@ mod parse_tests {
         );
         assert_eq!(
             parse("2025123123"),
-            Some(DT::YMDH {
+            Some(DT::Ymdh {
                 string: "2025123123".into(),
                 year: 2025,
                 month: 12,
@@ -132,7 +132,7 @@ mod parse_tests {
     fn yyyymmdd() {
         assert_eq!(
             parse("20250102"),
-            Some(DT::YMD {
+            Some(DT::Ymd {
                 string: "20250102".into(),
                 year: 2025,
                 month: 1,
@@ -141,7 +141,7 @@ mod parse_tests {
         );
         assert_eq!(
             parse("20251231"),
-            Some(DT::YMD {
+            Some(DT::Ymd {
                 string: "20251231".into(),
                 year: 2025,
                 month: 12,
