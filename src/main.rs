@@ -46,7 +46,7 @@ async fn get_data_from_url(url: &str) -> Result<String> {
 /// データを指定フォルダへ保存する。
 async fn save_to_file(filename: &str, dir: &str, content: &str) -> Result<()> {
     // 出力先ディレクトリが存在しないときは作成する
-    if !std::path::Path::exists(&std::path::Path::new(dir)) {
+    if !std::path::Path::exists(std::path::Path::new(dir)) {
         std::fs::create_dir(dir)?;
     }
 
