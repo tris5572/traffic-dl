@@ -102,8 +102,8 @@ pub fn get_datetime_list_5m(dt: &DT) -> Vec<String> {
 
 /// 保存に使用するファイル名と取得先URLを取得する
 fn get_target(time: &str, interval: &Interval, road_type: &RoadType, counter_type: &CounterType) -> (String, String) {
-    let name = create_filename(time, &interval, &road_type, &counter_type);
-    let url = create_url(time, &interval, &road_type, &counter_type);
+    let name = create_filename(time, interval, road_type, counter_type);
+    let url = create_url(time, interval, road_type, counter_type);
 
     (name, url)
 }
