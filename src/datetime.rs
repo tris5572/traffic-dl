@@ -27,7 +27,7 @@ pub enum DT {
 
 pub fn parse(input: &str) -> Option<DT> {
     // YYYYMMDDHHMM
-    let result = NaiveDateTime::parse_from_str(&format!("{}", input), "%Y%m%d%H%M");
+    let result = NaiveDateTime::parse_from_str(&input.to_string(), "%Y%m%d%H%M");
     if let Ok(dt) = result {
         let dt = DT::YMDHM {
             string: input.to_string(),
